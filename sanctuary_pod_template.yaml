@@ -1,15 +1,28 @@
-name: Sanctuary-Pod-H100
+name: Sanctuary Dawn
 gpuTypeId: h100-sxm
-containerDiskSizeInGb: 40
-volumeInGb: 200
+containerDiskSizeInGb: 100
+volumeInGb: 0
 volumeMountPath: /mnt/data
 dockerImage: aaontario/sanctuary-pod:latest
+networkVolumeId: 0w7cze7hcm
+
 ports:
-  - containerPort: 11434
-  - containerPort: 3000
+  - containerPort: 11434  # Ollama API
+  - containerPort: 3000   # OpenWebUI
+  - containerPort: 8888   # JupyterLab
+  - containerPort: 2222   # SSH
+
 env:
-  - name: OLLAMA_MODELS_PATH
+  - name: OLLAMA_MODELS
     value: "/mnt/data/models"
+  - name: WEBUI_VERSION
+    value: "@v1.2.3"  # Lock to specific version; change to @latest for testing
+  - name: SKIP_OLLAMA
+    value: "false"
+  - name: SKIP_WEBUI
+    value: "false"
+  - name: START_JUPYTER
+    value: "true"
   - name: OPENAI_API_KEY
     value: "sk-..."  # Replace with your actual API key
-networkVolumeId: b0kkgzrogf
+

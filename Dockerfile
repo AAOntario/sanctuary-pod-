@@ -1,26 +1,33 @@
 FROM ubuntu:22.04
 
+# Install base utilities and SSH server
 RUN apt-get update && apt-get install -y \
-    curl jq netcat lsof dos2unix python3 python3-pip && \
-    pip install jupyterlab && \
-    rm -rf /var/lib/apt/lists/*
+    openssh-server sudo curl wget gnupg2 \
+    jq netcat lsof dos2unix \
+    python3 python3-pip
 
-# Install uvx
-RUN curl -LsSf https://astral.sh/uv/install.sh | sh
+# Prepare SSH runtime
+RUN mkdir /var/run/sshd
+RUN sed -i 's/#Port 22/Port 2222/' /etc/ssh/sshd_config
+RUN echo 'root:changeme' | chpasswd
+RUN sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
+EXPOSE 2222
 
-# Install Ollama
+# Install Python packages and uvx
+RUN pip install --no-cache-dir jupyterlab uv uvx
+
+# Pre-pull a pinned OpenWebUI version for fast startup
+RUN uvx --python 3.11 open-webui@v1.2.3 install
+
+# Install Ollama (latest at build time)
 RUN curl -fsSL https://ollama.com/install.sh | sh
 
-# Create mount points
-RUN mkdir -p /mnt/data/models /mnt/data/logs /mnt/data/webui_data
-
+# Default Ollama model storage location
 ENV OLLAMA_MODELS=/mnt/data/models
 
+# Copy entrypoint script
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
-EXPOSE 11434 3000 8888
-
-HEALTHCHECK CMD nc -z localhost 11434 || exit 1
-
+# Entrypoint
 ENTRYPOINT ["/entrypoint.sh"]
