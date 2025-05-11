@@ -16,11 +16,12 @@ EXPOSE 2222
 # Install Python packages and uvx
 RUN pip install --no-cache-dir jupyterlab uv uvx
 
-# Pre-pull a pinned OpenWebUI version for fast startup
-RUN uvx --python 3.11 open-webui@v1.2.3 install
+# Pre-pull a pinned OpenWebUI version for fast startup (no --python here)
+RUN uvx open-webui@v1.2.3 install
 
 # Install Ollama (latest at build time)
 RUN curl -fsSL https://ollama.com/install.sh | sh
+
 
 # Default Ollama model storage location
 ENV OLLAMA_MODELS=/mnt/data/models
