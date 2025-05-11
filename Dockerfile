@@ -13,20 +13,17 @@ RUN echo 'root:changeme' | chpasswd
 RUN sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
 EXPOSE 2222
 
-# Install Python packages and uvx
+# Install Python packages, Jupyter, and uvx
 RUN pip install --no-cache-dir jupyterlab uv uvx
-
-# Pre-pull a pinned OpenWebUI version for fast startup (no --python here)
-RUN uvx open-webui@v1.2.3 install
 
 # Install Ollama (latest at build time)
 RUN curl -fsSL https://ollama.com/install.sh | sh
 
 
-# Default Ollama model storage location
+# Set default model storage
 ENV OLLAMA_MODELS=/mnt/data/models
 
-# Copy entrypoint script
+# Copy entrypoint
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
