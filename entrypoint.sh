@@ -14,13 +14,14 @@ else
   echo "[ollama] Skipped."
 fi
 
-# Start OpenWebUI if not skipped
+## Start OpenWebUI if not skipped
 if [[ "${SKIP_WEBUI,,}" != "true" ]]; then
-  echo "[openwebui] Starting OpenWebUI on port 3000..."
-  python3 -m openwebui serve --port 3000 >> /mnt/data/logs/openwebui.log 2>&1 &
+  echo "[openwebui] Starting OpenWebUI @v1.2.3 on port 3000..."
+  DATA_DIR="/mnt/data/webui_data" uvx --python 3.11 open-webui@v1.2.3 serve >> /mnt/data/logs/openwebui.log 2>&1 &
 else
   echo "[openwebui] Skipped."
 fi
+
 
 # Start JupyterLab if enabled
 if [[ "${START_JUPYTER,,}" == "true" ]]; then
