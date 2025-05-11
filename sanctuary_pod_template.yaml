@@ -1,0 +1,15 @@
+name: Sanctuary-Pod-H100
+gpuTypeId: h100-sxm
+containerDiskSizeInGb: 40
+volumeInGb: 200
+volumeMountPath: /mnt/data
+dockerImage: aaontario/sanctuary-pod:latest
+ports:
+  - containerPort: 11434
+  - containerPort: 3000
+env:
+  - name: OLLAMA_MODELS_PATH
+    value: "/mnt/data/models"
+  - name: OPENAI_API_KEY
+    value: "sk-..."  # Replace with your actual API key
+networkVolumeId: b0kkgzrogf
